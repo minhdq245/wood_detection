@@ -98,6 +98,13 @@
         .instructions li {
             margin-bottom: 8px;
         }
+        .camera-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -107,21 +114,24 @@
         <canvas id="canvas"></canvas>
     </div>
     <div id="controls">
-        <select id="cameraSelect" disabled>
-            <option value="">Select a camera...</option>
-        </select>
-        <button id="startButton" disabled>Start Detection</button>
+        <div class="camera-controls">
+            <button id="requestCameraButton">Request Camera Access</button>
+            <select id="cameraSelect" disabled>
+                <option value="">Select a camera...</option>
+            </select>
+            <button id="startButton" disabled>Start Detection</button>
+        </div>
         <div id="permissionMessage">
-            Please allow camera access and select a camera to start detection.
+            Click "Request Camera Access" to begin.
         </div>
         <div class="instructions">
             <h3>How to enable camera access:</h3>
             <ol>
-                <li>Make sure you're using a modern browser (Chrome, Firefox, Edge, or Safari)</li>
-                <li>Check if your browser is blocking camera access (look for a camera icon in the address bar)</li>
-                <li>Click the camera icon and select "Allow" for camera access</li>
-                <li>If you don't see the camera icon, try refreshing the page</li>
-                <li>Make sure no other application is using your camera</li>
+                <li>Click the "Request Camera Access" button</li>
+                <li>When prompted, click "Allow" to grant camera access</li>
+                <li>Select your camera from the dropdown menu</li>
+                <li>Click "Start Detection" to begin</li>
+                <li>If you don't see the camera prompt, check your browser settings</li>
             </ol>
         </div>
     </div>

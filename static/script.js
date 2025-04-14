@@ -3,6 +3,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const cameraSelect = document.getElementById('cameraSelect');
 const startButton = document.getElementById('startButton');
+const requestCameraButton = document.getElementById('requestCameraButton');
 const permissionMessage = document.getElementById('permissionMessage');
 const statusDiv = document.getElementById('status');
 const fpsCounter = document.getElementById('fps');
@@ -48,10 +49,6 @@ function updatePermissionMessage(message, isError = false) {
 // Function to get available cameras
 async function getCameras() {
     try {
-        // First request camera access
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        stream.getTracks().forEach(track => track.stop()); // Stop the stream after getting permission
-        
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoDevices = devices.filter(device => device.kind === 'videoinput');
         
@@ -76,13 +73,7 @@ async function getCameras() {
         }
     } catch (error) {
         console.error('Error getting cameras:', error);
-        if (error.name === 'NotAllowedError') {
-            updatePermissionMessage('Camera access denied. Please allow camera access to use this application.', true);
-        } else if (error.name === 'NotFoundError') {
-            updatePermissionMessage('No camera found. Please check your camera connection.', true);
-        } else {
-            updatePermissionMessage('Error accessing cameras: ' + error.message, true);
-        }
+        updatePermissionMessage('Error accessing cameras: ' + error.message, true);
     }
 }
 
@@ -152,6 +143,30 @@ async function detect() {
         console.error('Error in detection:', error);
     }
 }
+
+// Event listener for request camera button
+requestCameraButton.addEventListener('click', async () => {
+    try {
+        // Request camera access
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach(track => track.stop()); // Stop the stream after getting permission
+        
+        // Get available cameras
+        await getCameras();
+        
+        // Hide request button
+        requestCameraButton.style.display = 'none';
+    } catch (error) {
+        console.error('Error requesting camera access:', error);
+        if (error.name === 'NotAllowedError') {
+            updatePermissionMessage('Camera access denied. Please allow camera access in your browser settings.', true);
+        } else if (error.name === 'NotFoundError') {
+            updatePermissionMessage('No camera found. Please check your camera connection.', true);
+        } else {
+            updatePermissionMessage('Error accessing camera: ' + error.message, true);
+        }
+    }
+});
 
 // Event listener for camera selection
 cameraSelect.addEventListener('change', async () => {

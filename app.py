@@ -7,8 +7,13 @@ import base64
 import io
 from PIL import Image
 import gc
+import torch
 
 app = Flask(__name__)
+
+# Configure torch for memory efficiency
+torch.set_num_threads(1)  # Limit number of CPU threads
+torch.set_num_interop_threads(1)
 
 # Load YOLO model with optimized settings
 model_path = os.path.join(os.path.dirname(__file__), 'best.pt')
@@ -18,11 +23,15 @@ print(f"Loading model from: {model_path}")
 model = YOLO(model_path)
 
 # Configure model parameters for memory efficiency
-model.conf = 0.5  # Confidence threshold
+model.conf = 0.6  # Increased confidence threshold
 model.iou = 0.45  # IOU threshold for NMS
 model.agnostic_nms = True  # Class-agnostic NMS
-model.max_det = 50  # Reduce maximum detections to save memory
+model.max_det = 10  # Further reduce maximum detections
 model.verbose = False  # Disable verbose output
+
+# Clear GPU memory if available
+if torch.cuda.is_available():
+    torch.cuda.empty_cache()
 
 @app.route('/')
 def index():
@@ -41,21 +50,22 @@ def detect():
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         
         # Resize image to reduce memory usage
-        max_size = 640  # Reduced from 1280 to 640
+        max_size = 320  # Further reduced for mobile
         height, width = img.shape[:2]
         if max(height, width) > max_size:
             scale = max_size / max(height, width)
             img = cv2.resize(img, (int(width * scale), int(height * scale)))
         
         # Run YOLO detection with memory optimization
-        results = model(img, verbose=False)
+        with torch.no_grad():  # Disable gradient calculation
+            results = model(img, verbose=False)
         
         # Process results
         detections = []
         for result in results:
             boxes = result.boxes
             for box in boxes:
-                if box.conf.item() > 0.5:  # Confidence threshold
+                if box.conf.item() > 0.6:  # Increased confidence threshold
                     x1, y1, x2, y2 = box.xyxy[0].tolist()
                     conf = box.conf.item()
                     cls = int(box.cls.item())
@@ -69,6 +79,8 @@ def detect():
         # Clean up memory
         del img, results, boxes
         gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
         
         return jsonify({
             'success': True,
@@ -83,4 +95,4 @@ def detect():
         }), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True) 
+    app.run(host='0.0.0.0', port=8080, debug=True) 

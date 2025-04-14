@@ -2,34 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>YOLO Object Detection</title>
     <style>
         body {
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: #f0f0f0;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
             font-family: Arial, sans-serif;
         }
         #container {
             position: relative;
-            width: 640px;
-            height: 480px;
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
             background-color: #000;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         #video {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: auto;
+            display: block;
         }
         #canvas {
             position: absolute;
@@ -39,44 +39,50 @@
             height: 100%;
         }
         #controls {
-            margin-top: 20px;
+            margin: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 10px;
+            width: 100%;
             max-width: 640px;
         }
-        select, button {
+        button, select {
             padding: 10px 20px;
             font-size: 16px;
-            border-radius: 5px;
             border: none;
-            cursor: pointer;
-        }
-        select {
-            width: 300px;
-            background-color: white;
-        }
-        button {
+            border-radius: 4px;
             background-color: #4CAF50;
             color: white;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #45a049;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
         }
         button:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
         }
         #permissionMessage {
-            margin-top: 10px;
-            padding: 15px;
-            background-color: #e3f2fd;
-            border-radius: 5px;
-            color: #1565c0;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
             text-align: center;
             width: 100%;
+            max-width: 300px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin: 20px 0;
+        }
+        @media (max-width: 480px) {
+            #container {
+                border-radius: 0;
+            }
+            button, select {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
         }
         .instructions {
             margin-top: 20px;
@@ -117,12 +123,12 @@
         <div class="camera-controls">
             <button id="requestCameraButton">Request Camera Access</button>
             <select id="cameraSelect" disabled>
-                <option value="">Select a camera...</option>
+                <option value="">Select Camera</option>
             </select>
             <button id="startButton" disabled>Start Detection</button>
         </div>
         <div id="permissionMessage">
-            Click "Request Camera Access" to begin.
+            Please allow camera access and select a camera to start detection.
         </div>
         <div class="instructions">
             <h3>How to enable camera access:</h3>

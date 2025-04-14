@@ -1,0 +1,172 @@
+:root {
+    --primary-color: #4CAF50;
+    --primary-hover: #45a049;
+    --error-color: #f44336;
+    --success-color: #4CAF50;
+    --text-color: #333;
+    --bg-color: #f5f5f5;
+    --container-bg: #fff;
+    --border-radius: 8px;
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.app-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+h1 {
+    color: var(--text-color);
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 2em;
+}
+
+.status-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.status-message {
+    padding: 10px;
+    border-radius: var(--border-radius);
+    background-color: var(--container-bg);
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.controls-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.camera-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+select, button {
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: var(--border-radius);
+    border: 1px solid #ddd;
+    background-color: var(--container-bg);
+    transition: all 0.3s ease;
+}
+
+select {
+    min-width: 200px;
+    cursor: pointer;
+}
+
+select:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.button-icon {
+    font-size: 14px;
+}
+
+.video-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#container {
+    position: relative;
+    width: 640px;
+    height: 480px;
+    background-color: #000;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+#video, #canvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.info-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: var(--container-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.fps-counter, .detection-info {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .app-container {
+        padding: 10px;
+    }
+
+    .camera-controls {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    select, button {
+        width: 100%;
+    }
+
+    #container {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 4/3;
+    }
+} 

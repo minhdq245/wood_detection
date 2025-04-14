@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YOLO Object Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <h1>YOLO Object Detection</h1>
+        
+        <div class="status-container">
+            <div id="permission-message" class="status-message">
+                Vui lòng cho phép truy cập camera để tiếp tục
+            </div>
+            <div id="status" class="status-message"></div>
+        </div>
+
+        <div class="controls-container">
+            <div class="camera-controls">
+                <select id="camera-select" disabled>
+                    <option value="">Chọn camera...</option>
+                </select>
+                <button id="start-button" disabled>
+                    <span class="button-text">Bắt đầu Detection</span>
+                    <span class="button-icon">▶</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="video-container">
+            <div id="container">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas"></canvas>
+            </div>
+        </div>
+
+        <div class="info-container">
+            <div class="fps-counter">
+                FPS: <span id="fps">0</span>
+            </div>
+            <div class="detection-info">
+                Đã phát hiện: <span id="detection-count">0</span> đối tượng
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html> 

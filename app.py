@@ -9,9 +9,14 @@ import os
 
 app = Flask(__name__)
 
-# Load model
+# Load model with optimized settings
 model_path = os.path.join(os.path.dirname(__file__), 'best.pt')
 model = YOLO(model_path)
+
+# Configure model for inference
+model.conf = 0.5  # Confidence threshold
+model.iou = 0.45  # IOU threshold
+model.agnostic_nms = True  # Class-agnostic NMS
 
 @app.route('/')
 def index():
@@ -25,16 +30,20 @@ def detect():
         image_data = data['image'].split(',')[1]
         image_bytes = base64.b64decode(image_data)
         
-        # Convert to OpenCV format
+        # Convert to OpenCV format with optimized settings
         image = Image.open(io.BytesIO(image_bytes))
         image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
         
-        # Run YOLO detection with adjusted parameters
-        results = model(image, 
-                       conf=0.5,
-                       iou=0.45,
-                       max_det=100,
-                       agnostic_nms=True)
+        # Resize image if too large
+        max_size = 640
+        h, w = image.shape[:2]
+        if max(h, w) > max_size:
+            scale = max_size / max(h, w)
+            new_h, new_w = int(h * scale), int(w * scale)
+            image = cv2.resize(image, (new_w, new_h))
+        
+        # Run YOLO detection
+        results = model(image)
         
         # Process results
         detections = []

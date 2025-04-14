@@ -1,3 +1,4 @@
+// Get video and canvas elements
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -136,7 +137,7 @@ async function detect() {
                 // Draw label
                 ctx.fillStyle = '#00FF00';
                 ctx.font = '16px Arial';
-                ctx.fillText(`${cls} (${conf.toFixed(2)})`, x1, y1 - 5);
+                ctx.fillText(`Class ${cls} (${conf.toFixed(2)})`, x1, y1 - 5);
             });
         }
     } catch (error) {

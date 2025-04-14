@@ -38,17 +38,20 @@ function updateFPS() {
     }
 }
 
-// Get video and canvas elements
-const video = document.getElementById('video');
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const cameraSelect = document.getElementById('cameraSelect');
-const startButton = document.getElementById('startButton');
-const permissionMessage = document.getElementById('permissionMessage');
+// Function to update permission message
+function updatePermissionMessage(message, isError = false) {
+    permissionMessage.textContent = message;
+    permissionMessage.style.backgroundColor = isError ? '#ffebee' : '#e3f2fd';
+    permissionMessage.style.color = isError ? '#c62828' : '#1565c0';
+}
 
 // Function to get available cameras
 async function getCameras() {
     try {
+        // First request camera access
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach(track => track.stop()); // Stop the stream after getting permission
+        
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoDevices = devices.filter(device => device.kind === 'videoinput');
         
@@ -67,13 +70,19 @@ async function getCameras() {
         if (videoDevices.length > 0) {
             cameraSelect.disabled = false;
             startButton.disabled = false;
-            permissionMessage.style.display = 'none';
+            updatePermissionMessage('Camera access granted. Please select a camera to start detection.');
         } else {
-            permissionMessage.textContent = 'No cameras found. Please check your camera connection.';
+            updatePermissionMessage('No cameras found. Please check your camera connection.', true);
         }
     } catch (error) {
         console.error('Error getting cameras:', error);
-        permissionMessage.textContent = 'Error accessing cameras. Please check your browser permissions.';
+        if (error.name === 'NotAllowedError') {
+            updatePermissionMessage('Camera access denied. Please allow camera access to use this application.', true);
+        } else if (error.name === 'NotFoundError') {
+            updatePermissionMessage('No camera found. Please check your camera connection.', true);
+        } else {
+            updatePermissionMessage('Error accessing cameras: ' + error.message, true);
+        }
     }
 }
 
@@ -91,10 +100,11 @@ async function setupCamera(deviceId) {
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = stream;
         await video.play();
+        updatePermissionMessage('Camera is ready. Click Start Detection to begin.');
         return true;
     } catch (error) {
         console.error('Error setting up camera:', error);
-        permissionMessage.textContent = 'Error accessing camera. Please check your browser permissions.';
+        updatePermissionMessage('Error accessing camera: ' + error.message, true);
         return false;
     }
 }
@@ -152,24 +162,19 @@ cameraSelect.addEventListener('change', async () => {
 // Event listener for start button
 startButton.addEventListener('click', async () => {
     try {
-        // Request camera access
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        stream.getTracks().forEach(track => track.stop()); // Stop the stream
-        
-        // Get available cameras
-        await getCameras();
-        
-        // Setup initial camera
         const deviceId = cameraSelect.value;
         const success = await setupCamera(deviceId);
         
         if (success) {
+            startButton.disabled = true;
+            cameraSelect.disabled = true;
+            updatePermissionMessage('Detection is running...');
             // Start detection loop
             setInterval(detect, 100);
         }
     } catch (error) {
         console.error('Error starting camera:', error);
-        permissionMessage.textContent = 'Please allow camera access to use this application.';
+        updatePermissionMessage('Error starting detection: ' + error.message, true);
     }
 });
 

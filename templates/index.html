@@ -44,6 +44,7 @@
             flex-direction: column;
             align-items: center;
             gap: 10px;
+            max-width: 640px;
         }
         select, button {
             padding: 10px 20px;
@@ -70,11 +71,32 @@
         }
         #permissionMessage {
             margin-top: 10px;
-            padding: 10px;
-            background-color: #ffebee;
+            padding: 15px;
+            background-color: #e3f2fd;
             border-radius: 5px;
-            color: #c62828;
+            color: #1565c0;
             text-align: center;
+            width: 100%;
+        }
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff3e0;
+            border-radius: 5px;
+            color: #e65100;
+            text-align: left;
+            width: 100%;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #e65100;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 8px;
         }
     </style>
 </head>
@@ -91,6 +113,16 @@
         <button id="startButton" disabled>Start Detection</button>
         <div id="permissionMessage">
             Please allow camera access and select a camera to start detection.
+        </div>
+        <div class="instructions">
+            <h3>How to enable camera access:</h3>
+            <ol>
+                <li>Make sure you're using a modern browser (Chrome, Firefox, Edge, or Safari)</li>
+                <li>Check if your browser is blocking camera access (look for a camera icon in the address bar)</li>
+                <li>Click the camera icon and select "Allow" for camera access</li>
+                <li>If you don't see the camera icon, try refreshing the page</li>
+                <li>Make sure no other application is using your camera</li>
+            </ol>
         </div>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
